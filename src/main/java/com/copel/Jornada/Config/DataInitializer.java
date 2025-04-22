@@ -4,19 +4,19 @@ import java.util.UUID;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import com.copel.Jornada.User.UserRepository;
 import com.copel.Jornada.User.User;
 
+@Component
 public class DataInitializer implements CommandLineRunner{
     
     private final UserRepository userRepository;
-    private final User user;
     private final PasswordEncoder passwordEncoder;
 
-    public DataInitializer(UserRepository userRepository, User user, PasswordEncoder passwordEncoder) {
+    public DataInitializer(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.user = user;
         this.passwordEncoder = passwordEncoder;
     }
 
