@@ -1,4 +1,4 @@
-# 🌱 Projeto Jornada - Sistema de Usuários com Spring Boot e PostgreSQL
+# 🌱 Projeto Jornada - Sistema de Demandas com Spring Boot e PostgreSQL
 
 O projeto se trata de uma API utilizada em um sistema de gerenciamento de demandas para a empresa COPEL, residênte em Londrina.
 
