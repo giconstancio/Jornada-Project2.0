@@ -23,9 +23,9 @@ public class UserController {
         return userRepository.findAll();
     }
 
-    @GetMapping("/getBy/{slug}")
-    public Optional<User> getBySlug(@PathVariable String slug) {
-        return userRepository.findBySlug(slug);
+    @GetMapping("/getBy/{id}")
+    public Optional<User> getBySlug(@PathVariable Long id) {
+        return userRepository.findById(id);
     }
 
     @PostMapping("/create")
@@ -33,9 +33,9 @@ public class UserController {
         return userRepository.save(user);
     }
 
-    @PutMapping("/update/{slug}")
-    public User updateUser(@PathVariable String slug, @RequestBody User newUser) {
-        return userRepository.findBySlug(slug)
+    @PutMapping("/update/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User newUser) {
+        return userRepository.findById(id)
                 .map(user -> {
                     user.setEmail(newUser.getEmail());
                     user.setName(newUser.getName());
@@ -45,9 +45,9 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("Pessoa não encontrada"));
     }
 
-    @DeleteMapping("/delete/{slug}")
-    public void deleteUser(@PathVariable String slug) {
-        userRepository.deleteBySlug(slug);
+    @DeleteMapping("/delete/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        userRepository.deleteById(id);
     }
 }
 
