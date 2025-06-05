@@ -1,4 +1,4 @@
-package com.Seeders;
+package com.copel.Jornada.Seeders;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -7,7 +7,7 @@ import com.copel.Jornada.User.UserRepository;
 import com.copel.Jornada.User.User;
 
 @Component
-public class UserSeedCommand{
+public class UserSeedCommand {
     
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

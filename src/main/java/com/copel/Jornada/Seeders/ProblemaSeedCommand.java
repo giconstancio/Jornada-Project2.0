@@ -1,4 +1,4 @@
-package com.Seeders;
+package com.copel.Jornada.Seeders;
 
 import java.util.List;
 import org.springframework.transaction.annotation.Transactional;

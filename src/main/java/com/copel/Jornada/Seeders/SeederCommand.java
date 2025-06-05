@@ -1,4 +1,4 @@
-package com.Seeders;
+package com.copel.Jornada.Seeders;
 
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -19,16 +19,9 @@ public class SeederCommand implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (args.containsOption("seed-user")) {
-            userSeedCommand.seedAdminUser();
-        }
-
-        if (args.containsOption("seed-problema")) {
-            problemaSeedCommand.seedProblemas();
-        }
-
-        if (args.containsOption("seed-regiao")) {
-            regiaoSeedCommand.seedRegiao();
-        }
+        userSeedCommand.seedAdminUser();
+        problemaSeedCommand.seedProblemas();
+        regiaoSeedCommand.seedRegiao();
     }
+
 }

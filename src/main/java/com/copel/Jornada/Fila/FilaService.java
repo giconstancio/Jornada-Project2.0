@@ -17,31 +17,7 @@ public class FilaService {
         this.fila = fila;
         this.demandaService = demandaService;
     }
-
-    public String adicaoManualPeso(String idEscolhido, int adicionar) {
-        for (Demanda d : fila.get_onHolding()) {
-            if (d.getProblema().getId().equals(idEscolhido)) {
-                d.setEntradaManual(d.getEntradaManual() + adicionar);
-                return "Peso adicionado!";
-            }
-        }
-        return "Demanda não encontrada";
-    }
-
-    public String remocaoManualPeso(String idEscolhido, int remover) {
-        for (Demanda d : fila.get_onHolding()) {
-            if (d.getProblema().getId().equals(idEscolhido)) {
-                if (remover > d.getEntradaManual()) {
-                    return "Valor inválido para remoção!";
-                } else {
-                    d.setEntradaManual(d.getEntradaManual() - remover);
-                    return "Peso diminuído!";
-                }
-            }
-        }
-        return "Demanda não encontrada";
-    }
-
+   
     public String visualizarOnHolding() {
         String resultado = "EM ESPERA - ";
 
@@ -52,7 +28,7 @@ public class FilaService {
         } else {
             for (Demanda d : fila.get_onHolding()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
+                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
             }
             return resultado;
@@ -69,7 +45,7 @@ public class FilaService {
         } else {
             for (Demanda d : fila.get_onGoing()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
+                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
             }
             return resultado;
@@ -86,7 +62,7 @@ public class FilaService {
         } else {
             for (Demanda d : fila.get_isExecuting()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
+                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
             }
             return resultado;
@@ -103,7 +79,7 @@ public class FilaService {
         } else {
             for (Demanda d : fila.get_finished()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
+                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
             }
             return resultado;
@@ -120,18 +96,18 @@ public class FilaService {
 
     public void implementacaoTempo() {
         for (Demanda d : fila.get_onHolding()) {
-            double aumentoHoraParado = d.getcustoHoraParado() + 0.5;
-            d.setPesoFinal(d.getPesoFinal() + aumentoHoraParado);
+            double aumentoHoraParado = d.getCustoHoraParado() + 0.5;
+            d.setPeso(d.getPeso() + aumentoHoraParado);
         }
 
         for (Demanda d : fila.get_isExecuting()) {
-            double aumentoHoraParado = d.getcustoHoraParado() + 0.5;
-            d.setPesoFinal(d.getPesoFinal() + aumentoHoraParado);
+            double aumentoHoraParado = d.getCustoHoraParado() + 0.5;
+            d.setPeso(d.getPeso() + aumentoHoraParado);
         }
 
         for (Demanda d : fila.get_onGoing()) {
-            double aumentoHoraParado = d.getcustoHoraParado() + 0.5;
-            d.setPesoFinal(d.getPesoFinal() + aumentoHoraParado);
+            double aumentoHoraParado = d.getCustoHoraParado() + 0.5;
+            d.setPeso(d.getPeso() + aumentoHoraParado);
         }
     }
 }

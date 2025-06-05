@@ -1,7 +1,5 @@
 package com.copel.Jornada.Problema;
 
-import java.util.UUID;
-
 import jakarta.persistence.*;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +10,6 @@ import lombok.NoArgsConstructor;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "problema")
 public class Problema {
     
@@ -20,19 +17,25 @@ public class Problema {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String slug = UUID.randomUUID().toString();
-
+    private String nome;
     private String descricao;
     private int tempoEspera;
     private int tempoMedioAtendimento;
+
+    public Problema(Long id, String nome, String descricao, int tempoEspera, int tempoMedioAtendimento) {
+    this.nome = nome;
+    this.id = id;
+    this.descricao = descricao;
+    this.tempoEspera = tempoEspera;
+    this.tempoMedioAtendimento = tempoMedioAtendimento;
+    }
 
     public Long getId() {
         return id;
     }
 
-    public String getSlug() {
-        return slug;
+    public String getNome() {
+        return nome;
     }
 
     public String getDescricao() {
@@ -47,8 +50,8 @@ public class Problema {
         return tempoMedioAtendimento;
     }
 
-    public void setSlug(String slug) {
-        this.slug = slug;
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setDescricao(String descricao) {

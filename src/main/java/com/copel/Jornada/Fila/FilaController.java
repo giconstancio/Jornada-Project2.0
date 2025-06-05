@@ -11,18 +11,6 @@ public class FilaController {
     @Autowired
     private FilaService filaService;
 
-    @PostMapping("/peso/adicionar")
-    public ResponseEntity<String> adicionarPeso(@RequestParam String id, @RequestParam int peso) {
-        String resultado = filaService.adicaoManualPeso(id, peso);
-        return ResponseEntity.ok(resultado);
-    }
-
-    @PostMapping("/peso/remover")
-    public ResponseEntity<String> removerPeso(@RequestParam String id, @RequestParam int peso) {
-        String resultado = filaService.remocaoManualPeso(id, peso);
-        return ResponseEntity.ok(resultado);
-    }
-
     @GetMapping("/visualizar/on-holding")
     public ResponseEntity<String> visualizarOnHolding() {
         String resultado = filaService.visualizarOnHolding();

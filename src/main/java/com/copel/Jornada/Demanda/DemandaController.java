@@ -4,8 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.copel.Jornada.Demanda.DTO.DemandaRequestDTO;
+import com.copel.Jornada.Demanda.Regiao.Regiao;
+
+import java.util.List;
+
 @RestController
-@RequestMapping("/demandas")
+@RequestMapping("/api/demandas")
 public class DemandaController {
     
     private final DemandaService demandaService;
@@ -14,14 +19,39 @@ public class DemandaController {
     public DemandaController(DemandaService demandaService) {
         this.demandaService = demandaService;
     }
-
-    @PostMapping
-    public ResponseEntity<Demanda> criarDemanda(@RequestBody Demanda demanda) {
-        Demanda demandaCriada = demandaService.adicionarDemanda(demanda);
-        return ResponseEntity.ok(demandaCriada);
+    
+    @PostMapping("/criar-demanda")
+    public ResponseEntity<Demanda> criarDemanda(@RequestBody DemandaRequestDTO dto) {
+        Demanda demanda = demandaService.adicionarDemanda(dto);
+        return ResponseEntity.ok(demanda);
     }
 
-    @GetMapping("/buscar")
+    @PutMapping("/editar-demanda/{id}")
+    public ResponseEntity<Demanda> editarDemanda(@PathVariable Long id, @RequestBody Demanda novaDemanda) {
+        Demanda atualizada = demandaService.editarDemanda(id, novaDemanda);
+        if (atualizada != null) {
+            return ResponseEntity.ok(atualizada);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/deletar-demanda/{id}")
+    public ResponseEntity<Void> deletarDemanda(@PathVariable Long id) {
+        boolean removida = demandaService.deletarDemanda(id);
+        if (removida) {
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/trazer-todas")
+    public ResponseEntity<List<Demanda>> listarTodasAsDemandas() {
+        return ResponseEntity.ok(demandaService.listarTodasAsDemandas());
+    }
+
+    @GetMapping("/buscarPor/{nome}")
     public ResponseEntity<Demanda> buscarPorNome(@RequestParam String nome) {
         Demanda d = demandaService.retornarDemandaPeloNome(nome);
         if (d != null) {

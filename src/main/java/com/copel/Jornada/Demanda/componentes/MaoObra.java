@@ -8,9 +8,8 @@ public class MaoObra {
         this.custoMaoObra = custoMaoObra;
     }
 
-    public int definirPesoPorMaoObra() {
-        int pesoMaoObra = (int) (custoMaoObra / 1000);
-        return pesoMaoObra * 2;
+    protected MaoObra() {
+        
     }
 
     public double getCustoMaoObra() {
