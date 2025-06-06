@@ -35,11 +35,13 @@ public class FilaController {
         return ResponseEntity.ok(resultado);
     }
 
+    /* VERIFICAR NECESSIDADE
     @GetMapping("/verificar-fila")
     public ResponseEntity<String> verificarFilaDemanda(@RequestParam String nome) {
         String resultado = filaService.verificarFilaDemanda(nome);
         return ResponseEntity.ok(resultado);
     }
+     */
 
     @PostMapping("/incrementar-tempo")
     public ResponseEntity<String> implementacaoTempo() {

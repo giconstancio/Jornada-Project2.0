@@ -26,6 +26,7 @@ public class DemandaController {
         return ResponseEntity.ok(demanda);
     }
 
+    /* 
     @PutMapping("/editar-demanda/{id}")
     public ResponseEntity<Demanda> editarDemanda(@PathVariable Long id, @RequestBody Demanda novaDemanda) {
         Demanda atualizada = demandaService.editarDemanda(id, novaDemanda);
@@ -45,12 +46,13 @@ public class DemandaController {
             return ResponseEntity.notFound().build();
         }
     }
-
-    @GetMapping("/trazer-todas")
-    public ResponseEntity<List<Demanda>> listarTodasAsDemandas() {
-        return ResponseEntity.ok(demandaService.listarTodasAsDemandas());
+*/
+    @GetMapping("/getAll")
+    public List<Demanda> listarDemandas() {
+        return demandaService.listarTodas();
     }
-
+    
+    /* FINALIZAR ROTA
     @GetMapping("/buscarPor/{nome}")
     public ResponseEntity<Demanda> buscarPorNome(@RequestParam String nome) {
         Demanda d = demandaService.retornarDemandaPeloNome(nome);
@@ -60,10 +62,12 @@ public class DemandaController {
             return ResponseEntity.notFound().build();
         }
     }
+     
+
 
     @PutMapping("/finalizar")
     public ResponseEntity<String> finalizarDemanda(@RequestBody Demanda demanda) {
         String resposta = demandaService.alterarStatusParaFinalizado(demanda);
         return ResponseEntity.ok(resposta);
-    }
+    } */
 }

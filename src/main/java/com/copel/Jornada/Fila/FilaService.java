@@ -21,12 +21,12 @@ public class FilaService {
     public String visualizarOnHolding() {
         String resultado = "EM ESPERA - ";
 
-        if (fila.get_onHolding().isEmpty()) {
+        if (fila.getFilaOnHolding().isEmpty()) {
             String visualizar = "Não há nenhuma demanda nessa fila";
             resultado += visualizar;
             return resultado;
         } else {
-            for (Demanda d : fila.get_onHolding()) {
+            for (Demanda d : fila.getFilaOnHolding()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
                         d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
@@ -38,12 +38,12 @@ public class FilaService {
     public String visualizarOnGoing() {
         String resultado = "EM ANDAMENTO - ";
 
-        if (fila.get_onGoing().isEmpty()) {
+        if (fila.getFilaOnGoing().isEmpty()) {
             String visualizar = "Não há nenhuma demanda nessa fila";
             resultado += visualizar;
             return resultado;
         } else {
-            for (Demanda d : fila.get_onGoing()) {
+            for (Demanda d : fila.getFilaOnGoing()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
                         d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
@@ -55,12 +55,12 @@ public class FilaService {
     public String visualizarIsExecuting() {
         String resultado = "SENDO EXECUTADA - ";
 
-        if (fila.get_isExecuting().isEmpty()) {
+        if (fila.getFilaIsExecuting().isEmpty()) {
             String visualizar = "Não há nenhuma demanda nessa fila";
             resultado += visualizar;
             return resultado;
         } else {
-            for (Demanda d : fila.get_isExecuting()) {
+            for (Demanda d : fila.getFilaIsExecuting()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
                         d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
@@ -72,12 +72,12 @@ public class FilaService {
     public String visualizarFinished() {
         String resultado = "FINALIZADA - ";
 
-        if (fila.get_finished().isEmpty()) {
+        if (fila.getFilaFinished().isEmpty()) {
             String visualizar = "Não há nenhuma demanda nessa fila";
             resultado += visualizar;
             return resultado;
         } else {
-            for (Demanda d : fila.get_finished()) {
+            for (Demanda d : fila.getFilaFinished()) {
                 String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
                         d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPeso());
                 resultado += visualizar;
@@ -86,6 +86,7 @@ public class FilaService {
         }
     }
 
+    /* VERIFICAR NECESSIDADE
     public String verificarFilaDemanda(String nome) {
         Demanda d = demandaService.retornarDemandaPeloNome(nome);
         if (d != null) {
@@ -93,19 +94,20 @@ public class FilaService {
         }
         return "Erro: Demanda não encontrada.";
     }
+     */
 
     public void implementacaoTempo() {
-        for (Demanda d : fila.get_onHolding()) {
+        for (Demanda d : fila.getFilaOnHolding()) {
             double aumentoHoraParado = d.getCustoHoraParado() + 0.5;
             d.setPeso(d.getPeso() + aumentoHoraParado);
         }
 
-        for (Demanda d : fila.get_isExecuting()) {
+        for (Demanda d : fila.getFilaIsExecuting()) {
             double aumentoHoraParado = d.getCustoHoraParado() + 0.5;
             d.setPeso(d.getPeso() + aumentoHoraParado);
         }
 
-        for (Demanda d : fila.get_onGoing()) {
+        for (Demanda d : fila.getFilaOnGoing()) {
             double aumentoHoraParado = d.getCustoHoraParado() + 0.5;
             d.setPeso(d.getPeso() + aumentoHoraParado);
         }

@@ -55,14 +55,12 @@ public class DemandaService {
 
         pesoCalculator.calcularPeso(demanda);
 
-        fila.getListaDeDemandas().add(demanda);
-        fila.getListaDeDemandasSemFinalizadas().add(demanda);
-        fila.filaViva();
+        fila.adicionarNovaDemanda(demanda);
 
         return demandaRepository.save(demanda);
     }
 
-    public Demanda editarDemanda(Long id, Demanda novaDemanda) {
+   /*  public Demanda editarDemanda(Long id, Demanda novaDemanda) {
     for (Demanda d : fila.getListaDeDemandas()) {
         if (d.getId().equals(id)) {
             d.setNome(novaDemanda.getNome());
@@ -102,20 +100,17 @@ public class DemandaService {
         }
         return false;
     }
-
-    public List<Demanda> listarTodasAsDemandas() {
-        return fila.getListaDeDemandas();
+*/
+    public List<Demanda> listarTodas() {
+        return demandaRepository.findAll();
     }
 
-    public Demanda retornarDemandaPeloNome(String nome) {
-        for (Demanda d : fila.getListaDeDemandas()) {
-            if (d.getNome().equalsIgnoreCase(nome)) {
-                return d;
-            }
-        }
-        return null;
+    /* FINALIZAR ROTA
+     *     public List<Demanda> buscarPorNome(Long id) {
+        return demandaRepository.findById(id);
     }
-
+     */
+/* 
     public String alterarStatusParaFinalizado(Demanda d) {
         fila.getListaDeDemandasSemFinalizadas().remove(d);
         d.setFila(FilaStatus.FINISHED);
@@ -123,6 +118,6 @@ public class DemandaService {
         fila.filaViva();
 
         return "Demanda finalizada!";
-    }
+    } */
 
 }
