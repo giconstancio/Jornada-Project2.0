@@ -19,8 +19,7 @@ public class FilaController {
 
     @PutMapping("/finalizar/{id}")
     public ResponseEntity<String> finalizarDemanda(@PathVariable Long id) {
-        String resultado = filaService.finalizarDemanda(id);
-        return ResponseEntity.ok(resultado);
+        return filaService.finalizarDemanda(id);
     }
 
 }

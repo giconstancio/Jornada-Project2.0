@@ -3,8 +3,11 @@ package com.copel.Jornada.Fila;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.copel.Jornada.Demanda.Demanda;
@@ -61,17 +64,25 @@ public class FilaService {
         }
     }
 
-    public String finalizarDemanda(Long idDemanda) {
-        return demandaRepository.findById(idDemanda)
-            .map(demanda -> {
-                if (demanda.getFila() != FilaStatus.IS_EXECUTING) {
-                    return "A demanda deve estar em execução para ser finalizada.";
-                }
-                demanda.setFila(FilaStatus.FINISHED);
-                demandaRepository.save(demanda);
-                return "Demanda '" + demanda.getNome() + "' finalizada com sucesso.";
-            })
-            .orElse("Demanda com ID " + idDemanda + " não encontrada.");
+    public ResponseEntity<String> finalizarDemanda(Long idDemanda) {
+        Optional<Demanda> optionalDemanda = demandaRepository.findById(idDemanda);
+
+        if (optionalDemanda.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Demanda com ID " + idDemanda + " não encontrada.");
+        }
+
+        Demanda demanda = optionalDemanda.get();
+
+        if (demanda.getFila() != FilaStatus.IS_EXECUTING) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("A demanda deve estar em execução para ser finalizada.");
+        }
+
+        demanda.setFila(FilaStatus.FINISHED);
+        demandaRepository.save(demanda);
+
+        return ResponseEntity.ok("Demanda '" + demanda.getNome() + "' finalizada com sucesso.");
     }
 
 }
