@@ -51,10 +51,4 @@ public class DemandaController {
     public Demanda buscarPorId(@PathVariable Long id) {
         return demandaService.buscarPorId(id);
     }
-
-    /*@PutMapping("/finalizar")
-    public ResponseEntity<String> finalizarDemanda(@RequestBody Demanda demanda) {
-        String resposta = demandaService.alterarStatusParaFinalizado(demanda);
-        return ResponseEntity.ok(resposta);
-    } */
 }

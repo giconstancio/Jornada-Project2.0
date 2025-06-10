@@ -2,7 +2,6 @@ package com.copel.Jornada.Problema;
 
 import jakarta.persistence.*;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
