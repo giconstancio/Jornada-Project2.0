@@ -1,13 +1,26 @@
 package com.copel.Jornada.PesoCalculator;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Random;
 
 import org.springframework.stereotype.Component;
 
 import com.copel.Jornada.Demanda.Demanda;
+import com.copel.Jornada.Util.FilaStatus;
+import com.copel.Jornada.Demanda.DemandaRepository;
+
+import jakarta.transaction.Transactional;
 
 @Component
 public class PesoCalculator {
+
+    private final DemandaRepository demandaRepository;
+
+    public PesoCalculator(DemandaRepository demandaRepository) {
+        this.demandaRepository = demandaRepository;
+    }
 
     public double calcularPeso(Demanda d) {
         int pesoPorCustoPecas = definirPesoPorCustoPecas(d);
@@ -22,6 +35,34 @@ public class PesoCalculator {
 
         d.setPeso(pesoTotal);
         return pesoTotal;
+    }
+
+    @Transactional
+    public void recalcularPesos() {
+        List<Demanda> demandas = demandaRepository.findByFilaIn(List.of(
+            FilaStatus.ON_HOLDING,
+            FilaStatus.ON_GOING,
+            FilaStatus.IS_EXECUTING
+        ));
+
+        LocalDateTime agora = LocalDateTime.now();
+
+        for (Demanda d : demandas) {
+            LocalDateTime ultimaAtualizacao = d.getUltimaAtualizacaoPeso();
+
+            if (ultimaAtualizacao != null) {
+                long segundosParado = Duration.between(ultimaAtualizacao, agora).toSeconds();
+
+                if (segundosParado > 0) {
+                    double aumento = segundosParado * (d.getCustoHoraParado() / 3600.0);
+                    d.setPeso(d.getPeso() + aumento);
+                }
+            }
+
+            d.setUltimaAtualizacaoPeso(agora);
+        }
+
+        demandaRepository.saveAll(demandas);
     }
 
     private int definirPesoPorCustoPecas(Demanda d) {

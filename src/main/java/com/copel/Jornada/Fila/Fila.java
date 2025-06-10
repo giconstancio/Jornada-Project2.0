@@ -36,7 +36,6 @@ public class Fila {
                 listaDeDemandasSemFinalizadas.add(d);
             }
         }
-
         atualizarFilas();
     }
 

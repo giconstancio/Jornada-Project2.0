@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import com.copel.Jornada.Fila.Fila;
 import com.copel.Jornada.PesoCalculator.*;
 import com.copel.Jornada.Problema.Problema;
-import com.copel.Jornada.Util.FilaStatus;
 import com.copel.Jornada.Demanda.DTO.DemandaRequestDTO;
+import com.copel.Jornada.Demanda.DTO.DemandaUpdateDTO;
 import com.copel.Jornada.Demanda.Regiao.*;
 import com.copel.Jornada.Demanda.componentes.ConsumoEnergia;
 import com.copel.Jornada.Demanda.componentes.Equipamento;
@@ -58,66 +58,42 @@ public class DemandaService {
         fila.adicionarNovaDemanda(demanda);
 
         return demandaRepository.save(demanda);
-    }
+    } 
 
-   /*  public Demanda editarDemanda(Long id, Demanda novaDemanda) {
-    for (Demanda d : fila.getListaDeDemandas()) {
-        if (d.getId().equals(id)) {
-            d.setNome(novaDemanda.getNome());
-            d.setProblema(novaDemanda.getProblema());
-            d.setDistanciaSede(novaDemanda.getDistanciaSede());
-            d.setDistanciaVeiculo(novaDemanda.getDistanciaVeiculo());
-            d.setCustoHoraParado(novaDemanda.getCustoHoraParado());
-            d.setPecas(novaDemanda.getPecas());
-            d.setMaoObra(novaDemanda.getMaoObra());
-            d.setEquipamento(novaDemanda.getEquipamento());
-            d.setRegiao(novaDemanda.getRegiao());
-            d.setConsumoEnergia(novaDemanda.getConsumoEnergia());
+    public Demanda editarDemanda(Long id, DemandaUpdateDTO dtoUpdate) {
+        for (Demanda d : fila.getTodasDemandas()) {
+            if (d.getId().equals(id)) {
 
-            pesoCalculator.calcularPeso(d);
-            fila.filaViva();
-            return d;
+                if (dtoUpdate.getProblemaId() != null) {
+                    Problema problema = problemaRepository.findById(dtoUpdate.getProblemaId())
+                        .orElseThrow(() -> new IllegalArgumentException("Problema com ID " + dtoUpdate.getProblemaId() + " não encontrado"));
+                    d.setProblema(problema);
+                }
+
+                if (dtoUpdate.getNome() != null) {
+                    d.setNome(dtoUpdate.getNome());
+                }
+
+                if (dtoUpdate.getPeso() != null) {
+                    d.setPeso(dtoUpdate.getPeso());
+                }
+
+                return demandaRepository.save(d);
             }
         }
         return null;
     }
 
-    public boolean deletarDemanda(Long id) {
-        Demanda paraRemover = null;
-        for (Demanda d : fila.getListaDeDemandas()) {
-            if (d.getId().equals(id)) {
-                paraRemover = d;
-                break;
-            }
-        }
-
-        if (paraRemover != null) {
-            fila.getListaDeDemandas().remove(paraRemover);
-            fila.getListaDeDemandasSemFinalizadas().remove(paraRemover);
-            fila.get_finished().remove(paraRemover);
-            fila.filaViva();
-            return true;
-        }
-        return false;
+    public void deletarDemanda(Long id) {
+        demandaRepository.deleteById(id);
     }
-*/
+
     public List<Demanda> listarTodas() {
         return demandaRepository.findAll();
     }
 
-    /* FINALIZAR ROTA
-     *     public List<Demanda> buscarPorNome(Long id) {
-        return demandaRepository.findById(id);
+    public Demanda buscarPorId(Long id) {
+        return demandaRepository.findById(id).orElseThrow(() -> new RuntimeException("Demanda não encontrada."));
     }
-     */
-/* 
-    public String alterarStatusParaFinalizado(Demanda d) {
-        fila.getListaDeDemandasSemFinalizadas().remove(d);
-        d.setFila(FilaStatus.FINISHED);
-        fila.get_finished().add(d);
-        fila.filaViva();
-
-        return "Demanda finalizada!";
-    } */
 
 }

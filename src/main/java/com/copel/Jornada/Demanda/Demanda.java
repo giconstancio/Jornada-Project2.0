@@ -1,5 +1,7 @@
 package com.copel.Jornada.Demanda;
 
+import java.time.LocalDateTime;
+
 import com.copel.Jornada.Demanda.Regiao.Regiao;
 import com.copel.Jornada.Demanda.componentes.*;
 import com.copel.Jornada.Problema.Problema;
@@ -43,6 +45,9 @@ public class Demanda {
     private double peso;
 
     private int fila;
+
+    @Column(name = "ultima_atualizacao_peso")
+    private LocalDateTime ultimaAtualizacaoPeso;
 
 
     public Demanda(String nome, Problema classeProblema, double distanciaSede, double distanciaVeiculo,
@@ -162,5 +167,13 @@ public class Demanda {
 
     public void setFila(int filaAtual) {
         this.fila = filaAtual;
+    }
+
+    public LocalDateTime getUltimaAtualizacaoPeso() {
+        return ultimaAtualizacaoPeso;
+    }
+
+    public void setUltimaAtualizacaoPeso(LocalDateTime data) {
+        this.ultimaAtualizacaoPeso = data;
     }
 }

@@ -5,11 +5,23 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/fila")
+@RequestMapping("/api/fila")
 public class FilaController {
     
     @Autowired
     private FilaService filaService;
+
+    @PostMapping("/demandas/redistribuir")
+    public ResponseEntity<Void> redistribuir() {
+        filaService.redistribuirFilas();
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/finalizar/{id}")
+    public ResponseEntity<String> finalizarDemanda(@PathVariable Long id) {
+        String resultado = filaService.finalizarDemanda(id);
+        return ResponseEntity.ok(resultado);
+    }
 
     @GetMapping("/visualizar/on-holding")
     public ResponseEntity<String> visualizarOnHolding() {
@@ -35,17 +47,4 @@ public class FilaController {
         return ResponseEntity.ok(resultado);
     }
 
-    /* VERIFICAR NECESSIDADE
-    @GetMapping("/verificar-fila")
-    public ResponseEntity<String> verificarFilaDemanda(@RequestParam String nome) {
-        String resultado = filaService.verificarFilaDemanda(nome);
-        return ResponseEntity.ok(resultado);
-    }
-     */
-
-    @PostMapping("/incrementar-tempo")
-    public ResponseEntity<String> implementacaoTempo() {
-        filaService.implementacaoTempo();
-        return ResponseEntity.ok("Tempo de 30 minutos incrementado nas filas com sucesso.");
-    }
 }
