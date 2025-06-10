@@ -21,7 +21,7 @@ public class DemandaController {
         this.demandaService = demandaService;
     }
     
-    @PostMapping("/criar-demanda")
+    @PostMapping("/criarDemanda")
     public ResponseEntity<Demanda> criarDemanda(@RequestBody DemandaRequestDTO dto) {
         Demanda demanda = demandaService.adicionarDemanda(dto);
         return ResponseEntity.ok(demanda);

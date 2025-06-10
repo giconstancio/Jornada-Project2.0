@@ -14,18 +14,21 @@ import com.copel.Jornada.Demanda.componentes.ConsumoEnergia;
 import com.copel.Jornada.Demanda.componentes.Equipamento;
 import com.copel.Jornada.Demanda.componentes.MaoObra;
 import com.copel.Jornada.Demanda.componentes.Pecas;
+import com.copel.Jornada.Fila.FilaService;
 import com.copel.Jornada.Problema.ProblemaRepository;
 
 @Service
 public class DemandaService {
 
+    private final FilaService filaService;
     private final Fila fila;
     private final PesoCalculator pesoCalculator;
     private final RegiaoRepository regiaoRepository;
     private final ProblemaRepository problemaRepository;
     private final DemandaRepository demandaRepository;
 
-    public DemandaService(Fila fila, PesoCalculator pesoCalculator, RegiaoRepository regiaoRepository, ProblemaRepository problemaRepository, DemandaRepository demandaRepository) {
+    public DemandaService(FilaService filaService, PesoCalculator pesoCalculator, RegiaoRepository regiaoRepository, ProblemaRepository problemaRepository, DemandaRepository demandaRepository, Fila fila) {
+        this.filaService = filaService;
         this.fila = fila;
         this.pesoCalculator = pesoCalculator;
         this.regiaoRepository = regiaoRepository;
@@ -55,7 +58,7 @@ public class DemandaService {
 
         pesoCalculator.calcularPeso(demanda);
 
-        fila.adicionarNovaDemanda(demanda);
+        filaService.adicionarNovaDemanda(demanda);
 
         return demandaRepository.save(demanda);
     } 

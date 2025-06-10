@@ -23,28 +23,4 @@ public class FilaController {
         return ResponseEntity.ok(resultado);
     }
 
-    @GetMapping("/visualizar/on-holding")
-    public ResponseEntity<String> visualizarOnHolding() {
-        String resultado = filaService.visualizarOnHolding();
-        return ResponseEntity.ok(resultado);
-    }
-
-    @GetMapping("/visualizar/on-going")
-    public ResponseEntity<String> visualizarOnGoing() {
-        String resultado = filaService.visualizarOnGoing();
-        return ResponseEntity.ok(resultado);
-    }
-
-    @GetMapping("/visualizar/is-executing")
-    public ResponseEntity<String> visualizarIsExecuting() {
-        String resultado = filaService.visualizarIsExecuting();
-        return ResponseEntity.ok(resultado);
-    }
-
-    @GetMapping("/visualizar/finished")
-    public ResponseEntity<String> visualizarFinished() {
-        String resultado = filaService.visualizarFinished();
-        return ResponseEntity.ok(resultado);
-    }
-
 }
