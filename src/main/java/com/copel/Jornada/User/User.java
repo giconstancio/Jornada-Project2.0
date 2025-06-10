@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 import jakarta.persistence.*;
 
 @Entity
@@ -19,19 +17,12 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
-    private String slug = UUID.randomUUID().toString();
-
     private String email;
     private String name;
     private String password;
 
     public Long getId() {
         return id;
-    }
-
-    public String getSlug() {
-        return slug;
     }
 
     public String getEmail() {
@@ -44,10 +35,6 @@ public class User {
 
     public String getPassword() {
         return password;
-    }
-
-    public void setSlug(String slug) {
-        this.slug = slug;
     }
 
     public void setEmail(String email) {

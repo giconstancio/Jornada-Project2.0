@@ -8,9 +8,8 @@ public class Pecas {
         this.custoPecas = custoPecas;
     }
 
-    public int definirPesoPorCustoPecas() {
-        int pesoPecas = (int) (custoPecas / 1000);
-        return pesoPecas;
+    protected Pecas() {
+        
     }
 
     public double getCustoPecas() {

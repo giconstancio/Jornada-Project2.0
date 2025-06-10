@@ -1,137 +1,88 @@
 package com.copel.Jornada.Fila;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.copel.Jornada.Demanda.Demanda;
-import com.copel.Jornada.Demanda.DemandaService;
+import com.copel.Jornada.Util.FilaStatus;
+
+import com.copel.Jornada.Demanda.DemandaRepository;
 
 @Service
 public class FilaService {
     
     private final Fila fila;
-    private final DemandaService demandaService;
+    private final DemandaRepository demandaRepository;
 
     @Autowired
-    public FilaService(Fila fila, DemandaService demandaService) {
+    public FilaService(Fila fila, DemandaRepository demandaRepository) {
         this.fila = fila;
-        this.demandaService = demandaService;
+        this.demandaRepository = demandaRepository;
+    }
+    
+    public void adicionarNovaDemanda(Demanda demanda) {
+        fila.listaDeDemandas.add(demanda);
+        fila.listaDeDemandasSemFinalizadas.add(demanda);
     }
 
-    public String adicaoManualPeso(String idEscolhido, int adicionar) {
-        for (Demanda d : fila.get_onHolding()) {
-            if (d.getProblema().getId().equals(idEscolhido)) {
-                d.setEntradaManual(d.getEntradaManual() + adicionar);
-                return "Peso adicionado!";
-            }
+    public void redistribuirFilas() {
+        List<Demanda> fila1 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.ON_HOLDING);
+        List<Demanda> fila2 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.ON_GOING);
+        List<Demanda> fila3 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.IS_EXECUTING);
+
+        int maxFila2 = 5;
+        int maxFila3 = 10;
+
+        List<Demanda> candidatasFila2 = new ArrayList<>();
+        candidatasFila2.addAll(fila1);
+        candidatasFila2.addAll(fila2);
+        candidatasFila2.sort(Comparator.comparingDouble(Demanda::getPeso).reversed());
+
+        for (int i = 0; i < candidatasFila2.size(); i++) {
+            Demanda d = candidatasFila2.get(i);
+            d.setFila(i < maxFila2 ? FilaStatus.ON_GOING : FilaStatus.ON_HOLDING);
+            demandaRepository.save(d);
         }
-        return "Demanda não encontrada";
-    }
 
-    public String remocaoManualPeso(String idEscolhido, int remover) {
-        for (Demanda d : fila.get_onHolding()) {
-            if (d.getProblema().getId().equals(idEscolhido)) {
-                if (remover > d.getEntradaManual()) {
-                    return "Valor inválido para remoção!";
-                } else {
-                    d.setEntradaManual(d.getEntradaManual() - remover);
-                    return "Peso diminuído!";
-                }
-            }
-        }
-        return "Demanda não encontrada";
-    }
+        List<Demanda> novasFila2 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.ON_GOING);
+        List<Demanda> candidatasFila3 = new ArrayList<>();
+        candidatasFila3.addAll(fila3);
+        candidatasFila3.addAll(novasFila2);
+        candidatasFila3.sort(Comparator.comparingDouble(Demanda::getPeso).reversed());
 
-    public String visualizarOnHolding() {
-        String resultado = "EM ESPERA - ";
-
-        if (fila.get_onHolding().isEmpty()) {
-            String visualizar = "Não há nenhuma demanda nessa fila";
-            resultado += visualizar;
-            return resultado;
-        } else {
-            for (Demanda d : fila.get_onHolding()) {
-                String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
-                resultado += visualizar;
-            }
-            return resultado;
+        for (int i = 0; i < candidatasFila3.size(); i++) {
+            Demanda d = candidatasFila3.get(i);
+            d.setFila(i < maxFila3 ? FilaStatus.IS_EXECUTING : FilaStatus.ON_GOING);
+            demandaRepository.save(d);
         }
     }
 
-    public String visualizarOnGoing() {
-        String resultado = "EM ANDAMENTO - ";
+    public ResponseEntity<String> finalizarDemanda(Long idDemanda) {
+        Optional<Demanda> optionalDemanda = demandaRepository.findById(idDemanda);
 
-        if (fila.get_onGoing().isEmpty()) {
-            String visualizar = "Não há nenhuma demanda nessa fila";
-            resultado += visualizar;
-            return resultado;
-        } else {
-            for (Demanda d : fila.get_onGoing()) {
-                String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
-                resultado += visualizar;
-            }
-            return resultado;
+        if (optionalDemanda.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Demanda com ID " + idDemanda + " não encontrada.");
         }
+
+        Demanda demanda = optionalDemanda.get();
+
+        if (demanda.getFila() != FilaStatus.IS_EXECUTING) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("A demanda deve estar em execução para ser finalizada.");
+        }
+
+        demanda.setFila(FilaStatus.FINISHED);
+        demandaRepository.save(demanda);
+
+        return ResponseEntity.ok("Demanda '" + demanda.getNome() + "' finalizada com sucesso.");
     }
 
-    public String visualizarIsExecuting() {
-        String resultado = "SENDO EXECUTADA - ";
-
-        if (fila.get_isExecuting().isEmpty()) {
-            String visualizar = "Não há nenhuma demanda nessa fila";
-            resultado += visualizar;
-            return resultado;
-        } else {
-            for (Demanda d : fila.get_isExecuting()) {
-                String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
-                resultado += visualizar;
-            }
-            return resultado;
-        }
-    }
-
-    public String visualizarFinished() {
-        String resultado = "FINALIZADA - ";
-
-        if (fila.get_finished().isEmpty()) {
-            String visualizar = "Não há nenhuma demanda nessa fila";
-            resultado += visualizar;
-            return resultado;
-        } else {
-            for (Demanda d : fila.get_finished()) {
-                String visualizar = String.format("Nome: %s\nID: %s\nClasse de problema: %s\nDescrição: %s\nDistância da sede: %.2f km\nDistância do veículo: %.2f km\nPeso da Demanda: %.0f\n\n", d.getNome(), d.getProblema().getId(), d.getProblema(), d.getProblema().getDescricao(),
-                        d.getDistanciaSede(), d.getDistanciaVeiculo(), d.getPesoFinal());
-                resultado += visualizar;
-            }
-            return resultado;
-        }
-    }
-
-    public String verificarFilaDemanda(String nome) {
-        Demanda d = demandaService.retornarDemandaPeloNome(nome);
-        if (d != null) {
-            return fila.verificarFila(d);
-        }
-        return "Erro: Demanda não encontrada.";
-    }
-
-    public void implementacaoTempo() {
-        for (Demanda d : fila.get_onHolding()) {
-            double aumentoHoraParado = d.getcustoHoraParado() + 0.5;
-            d.setPesoFinal(d.getPesoFinal() + aumentoHoraParado);
-        }
-
-        for (Demanda d : fila.get_isExecuting()) {
-            double aumentoHoraParado = d.getcustoHoraParado() + 0.5;
-            d.setPesoFinal(d.getPesoFinal() + aumentoHoraParado);
-        }
-
-        for (Demanda d : fila.get_onGoing()) {
-            double aumentoHoraParado = d.getcustoHoraParado() + 0.5;
-            d.setPesoFinal(d.getPesoFinal() + aumentoHoraParado);
-        }
-    }
 }

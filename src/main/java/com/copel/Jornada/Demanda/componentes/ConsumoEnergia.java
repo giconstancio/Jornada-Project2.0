@@ -8,9 +8,8 @@ public class ConsumoEnergia {
         this.consumoEnergia = consumoEnergia;
     }
 
-    public int definirPesoPorConsumoEnergia() {
-        int pesoConsumoEnergia = (int) (consumoEnergia / 6);
-        return pesoConsumoEnergia * 5;
+    protected ConsumoEnergia() {
+        
     }
 
     public double getConsumoEnergia() {

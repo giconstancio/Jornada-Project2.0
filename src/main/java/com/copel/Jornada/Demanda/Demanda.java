@@ -1,7 +1,8 @@
 package com.copel.Jornada.Demanda;
 
-import org.springframework.security.access.event.PublicInvocationEvent;
+import java.time.LocalDateTime;
 
+import com.copel.Jornada.Demanda.Regiao.Regiao;
 import com.copel.Jornada.Demanda.componentes.*;
 import com.copel.Jornada.Problema.Problema;
 
@@ -16,7 +17,11 @@ public class Demanda {
     private Long id;
 
     private String nome;
+
+    @ManyToOne
+    @JoinColumn(name = "problema_id")
     private Problema problema;
+    
     private double distanciaSede;
     private double distanciaVeiculo;
     private double custoHoraParado;
@@ -30,19 +35,23 @@ public class Demanda {
     @Embedded
     private Equipamento equipamento;
 
-    @Embedded
+    @ManyToOne
+    @JoinColumn(name = "regiao_id")
     private Regiao regiao;
 
     @Embedded
     private ConsumoEnergia consumoEnergia;
 
-    private int entradaManual;
-    private double pesoFinal;
-    private String status;
+    private double peso;
+
+    private int fila;
+
+    @Column(name = "ultima_atualizacao_peso")
+    private LocalDateTime ultimaAtualizacaoPeso;
 
 
     public Demanda(String nome, Problema classeProblema, double distanciaSede, double distanciaVeiculo,
-            double custoPecas, double custoMaoObra, double custoEquipamento, String regiao, double consumoEnergia, String status) {
+            double custoPecas, double custoMaoObra, double custoEquipamento, double consumoEnergia, int filaAtual) {
         this.nome = nome;
         this.problema = classeProblema;
         this.distanciaSede = distanciaSede;
@@ -51,10 +60,10 @@ public class Demanda {
         this.pecas = new Pecas(custoPecas);
         this.maoObra = new MaoObra(custoMaoObra);
         this.equipamento = new Equipamento(custoEquipamento);
-        this.regiao = new Regiao(regiao);
+        this.regiao = null;
         this.consumoEnergia = new ConsumoEnergia(consumoEnergia);
-        this.pesoFinal = 0.0;
-        this.status = status;
+        this.peso = 0.0;
+        this.fila = filaAtual;
     }
 
     public Demanda() {
@@ -96,11 +105,11 @@ public class Demanda {
         this.distanciaVeiculo = distanciaVeiculo;
     }
 
-    public double getcustoHoraParado() {
+    public double getCustoHoraParado() {
         return custoHoraParado;
     }
 
-    public void setcustoHoraParado(double custoHoraParado) {
+    public void setCustoHoraParado(double custoHoraParado) {
         this.custoHoraParado = custoHoraParado;
     }
 
@@ -144,27 +153,27 @@ public class Demanda {
         this.consumoEnergia = consumoEnergia;
     }
 
-    public int getEntradaManual() {
-        return entradaManual;
+    public double getPeso() {
+        return peso;
     }
 
-    public void setEntradaManual(int entradaManual) {
-        this.entradaManual = entradaManual;
+    public void setPeso(double pesoFinalDaDemanda) {
+        this.peso = pesoFinalDaDemanda;
     }
 
-    public double getPesoFinal() {
-        return pesoFinal;
+    public int getFila() {
+        return fila;
     }
 
-    public void setPesoFinal(double pesoFinalDaDemanda) {
-        this.pesoFinal = pesoFinalDaDemanda;
+    public void setFila(int filaAtual) {
+        this.fila = filaAtual;
     }
 
-    public String getStatus() {
-        return status;
+    public LocalDateTime getUltimaAtualizacaoPeso() {
+        return ultimaAtualizacaoPeso;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setUltimaAtualizacaoPeso(LocalDateTime data) {
+        this.ultimaAtualizacaoPeso = data;
     }
 }
