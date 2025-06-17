@@ -28,8 +28,8 @@ public class FilaService {
     }
     
     public void adicionarNovaDemanda(Demanda demanda) {
-        fila.listaDeDemandas.add(demanda);
-        fila.listaDeDemandasSemFinalizadas.add(demanda);
+        fila.getTodasDemandas().add(demanda);
+        fila.getDemandasSemFinalizadas().add(demanda);
     }
 
     public void redistribuirFilas() {

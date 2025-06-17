@@ -9,8 +9,8 @@ import java.util.*;
 public class Fila {
 
     private final Map<Integer, List<Demanda>> filas = new HashMap<>();
-    final List<Demanda> listaDeDemandas = new ArrayList<>();
-    final List<Demanda> listaDeDemandasSemFinalizadas = new ArrayList<>();
+    private final List<Demanda> listaDeDemandas = new ArrayList<>();
+    private final List<Demanda> listaDeDemandasSemFinalizadas = new ArrayList<>();
 
     public Fila() {
         filas.put(FilaStatus.ON_HOLDING, new ArrayList<>());
