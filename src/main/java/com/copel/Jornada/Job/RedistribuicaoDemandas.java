@@ -1,7 +1,7 @@
 package com.copel.Jornada.Job;
 
-import java.time.LocalDateTime;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -13,6 +13,7 @@ public class RedistribuicaoDemandas {
     
     private final FilaService filaService;
     private final PesoCalculator pesoCalculator;
+    private static final Logger logger = LoggerFactory.getLogger(RedistribuicaoDemandas.class);
 
     public RedistribuicaoDemandas(FilaService filaService, PesoCalculator pesoCalculator) {
         this.filaService = filaService;
@@ -21,9 +22,10 @@ public class RedistribuicaoDemandas {
 
     @Scheduled(cron = "0 */30 * * * *")
     public void executarRedistribuicao() {
-        System.out.println("🔄 [Job] Iniciando recálculo de pesos às " + LocalDateTime.now());
-        pesoCalculator.recalcularPesos(); 
-        filaService.redistribuirFilas(); 
-        System.out.println("Redistribuição concluída.");
+        pesoCalculator.recalcularPesos();
+        logger.info("Pesos recalculados com sucesso.");
+
+        filaService.redistribuirFilas();
+        logger.info("Filas redistribuídas com sucesso.");
     }
 }

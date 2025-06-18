@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,9 +35,10 @@ public class FilaService {
     }
 
     public void redistribuirFilas() {
+
         List<Demanda> fila1 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.ON_HOLDING);
         List<Demanda> fila2 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.ON_GOING);
-        List<Demanda> fila3 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.IS_EXECUTING);
+        List<Demanda> fila3Fixas = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.IS_EXECUTING); 
 
         int maxFila2 = 5;
         int maxFila3 = 10;
@@ -43,6 +46,10 @@ public class FilaService {
         List<Demanda> candidatasFila2 = new ArrayList<>();
         candidatasFila2.addAll(fila1);
         candidatasFila2.addAll(fila2);
+
+        Set<Long> idsFixos = fila3Fixas.stream().map(Demanda::getId).collect(Collectors.toSet());
+        candidatasFila2.removeIf(d -> idsFixos.contains(d.getId()));
+
         candidatasFila2.sort(Comparator.comparingDouble(Demanda::getPeso).reversed());
 
         for (int i = 0; i < candidatasFila2.size(); i++) {
@@ -53,13 +60,26 @@ public class FilaService {
 
         List<Demanda> novasFila2 = demandaRepository.findByFilaOrderByPesoDesc(FilaStatus.ON_GOING);
         List<Demanda> candidatasFila3 = new ArrayList<>();
-        candidatasFila3.addAll(fila3);
         candidatasFila3.addAll(novasFila2);
-        candidatasFila3.sort(Comparator.comparingDouble(Demanda::getPeso).reversed());
 
-        for (int i = 0; i < candidatasFila3.size(); i++) {
-            Demanda d = candidatasFila3.get(i);
-            d.setFila(i < maxFila3 ? FilaStatus.IS_EXECUTING : FilaStatus.ON_GOING);
+        Set<Long> idsFila3Fixas = fila3Fixas.stream().map(Demanda::getId).collect(Collectors.toSet());
+        candidatasFila3.removeIf(d -> idsFila3Fixas.contains(d.getId()));
+
+        List<Demanda> fila3Final = new ArrayList<>(fila3Fixas);
+
+        for (Demanda d : candidatasFila3) {
+            if (fila3Final.size() < maxFila3) {
+                d.setFila(FilaStatus.IS_EXECUTING);
+                fila3Final.add(d);
+            } else {
+                d.setFila(FilaStatus.ON_GOING);
+            }
+            demandaRepository.save(d);
+        }
+
+
+        for (Demanda d : fila3Fixas) {
+            d.setFila(FilaStatus.IS_EXECUTING);
             demandaRepository.save(d);
         }
     }
